@@ -32,7 +32,7 @@ const Header = () => {
   alt="Logo"
 />
       </Link >
-      <ul 
+      <ul  onClick={showMenu}
      className={`fixed mt-[.65rem] top-12 left-0 h-full w-64 bg-[#01C29A] text-white transition-transform duration-300 ease-in-out ${
       isOpen ? "translate-x-0" : "-translate-x-full"
     }`}
