@@ -1,14 +1,11 @@
 "use client"
 import React, { useState,useCallback } from 'react'
-import BtnBack from './BtnBack'
 import Voto from './Voto'
 import Detalles from './Detalles'
-import Category from './Category'
 import BtnEdit from './BtnEdit'
 import BtnDelete from './BtnDelete'
 import Link from 'next/link'
 import Image from 'next/image'
-import RecommendedWrapper from './recommendedWapper'
 
 const Post = ({post,params,userLogin,styles,cantidadVotos}) => {
   const [votos, setVotos] = useState(cantidadVotos);
