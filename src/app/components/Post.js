@@ -6,8 +6,9 @@ import BtnEdit from './BtnEdit'
 import BtnDelete from './BtnDelete'
 import Link from 'next/link'
 import Image from 'next/image'
+import styles from '@/app/post/[id]/page.module.css';
 
-const Post = ({post,params,userLogin,styles,cantidadVotos}) => {
+const Post = ({post,params,userLogin,cantidadVotos}) => {
   const [votos, setVotos] = useState(cantidadVotos);
   const [votoAnterior, setVotoAnterior] = useState(post.resultado_voto || null);
 

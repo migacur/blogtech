@@ -1,7 +1,6 @@
 import CardTedencia from "./components/CardTedencia";
 import Card from "./components/Card";
 import { loadPost } from "./helpers/loadData";
-import Category from "./components/Category";
 import { Suspense } from 'react';
 import Spinner from "./components/spinner/Spinner";
 import CategoryList from "./components/CategoryList";

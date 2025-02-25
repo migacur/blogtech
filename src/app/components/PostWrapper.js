@@ -2,13 +2,10 @@
 import { cookies } from 'next/headers';
 import { showPostId } from '@/app/helpers/showPostId';
 import Post from '@/app/components/Post';
-import styles from '@/app/post/[id]/page.module.css';
 import { redirect } from 'next/navigation';
 import Swal from 'sweetalert2';
 import NotFound from './NotFound';
 import RecommendedWrapper from './recommendedWapper';
-import Category from './Category';
-import Detalles from './Detalles';
 import CategoryList from './CategoryList';
 
 export default async function PostWrapper({ params }) {
@@ -65,7 +62,6 @@ export default async function PostWrapper({ params }) {
       post={post} 
       params={params} 
       userLogin={userLogin} 
-      styles={styles}
       cantidadVotos={post.cantidad_votos}
     />
 
