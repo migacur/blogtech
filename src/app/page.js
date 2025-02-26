@@ -1,5 +1,5 @@
 import CardTedencia from "./components/CardTedencia";
-//import Card from "./components/Card";
+import Card from "./components/Card";
 import { loadPost } from "./helpers/loadData";
 import { Suspense } from 'react';
 import Spinner from "./components/spinner/Spinner";
@@ -12,7 +12,7 @@ export default async function Home() {
     <>
       <div className="col-span-2 max-md:col-span-3 mt-9">
         <Suspense fallback={ <Spinner/> }>
-       {/*   <Card posts={posts} /> */}
+          <Card posts={posts} />
         </Suspense>
       </div>
       <div className="col-span-2 md:col-span-1 mt-9">
