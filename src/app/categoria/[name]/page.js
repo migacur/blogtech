@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import Spinner from "@/app/components/spinner/Spinner";
 import CategoryList from "@/app/components/CategoryList";
 
-const API_URL = process.env.API_URL || 'http://localhost:3000';
+const API_URL = process.env.API_URL;
 
 export async function loadData(name) {
     const res = await fetch(`${API_URL}/api/post/category/${name}`);
