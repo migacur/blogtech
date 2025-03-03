@@ -2,9 +2,11 @@ import Recommended from './Recommended';
 
 const API_URL = process.env.API_URL;
 
+const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+
 export default async function RecommendedWrapper({ postId, categoryId }) {
   try {
-    const res = await fetch(`${API_URL}/api/post/recommended/${postId}/${categoryId}`);
+    const res = await fetch(`${normalizedAPI_URL}api/post/recommended/${postId}/${categoryId}`);
     if (!res.ok) {
       throw new Error(`Error: ${res.status} - ${res.statusText}`);
     }

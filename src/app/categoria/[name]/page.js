@@ -7,8 +7,10 @@ import CategoryList from "@/app/components/CategoryList";
 
 const API_URL = process.env.API_URL;
 
+const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+
 export async function loadData(name) {
-    const res = await fetch(`${API_URL}/api/post/category/${name}`);
+    const res = await fetch(`${normalizedAPI_URL}api/post/category/${name}`);
     const data = await res.json();
     return data;
 }

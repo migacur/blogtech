@@ -4,9 +4,11 @@ import Spinner from './spinner/Spinner';
 
 const API_URL = process.env.API_URL;
 
+const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+
 export async function loadTrend() {
     try {
-        const res = await fetch(`${API_URL}/api/post/trend`);
+        const res = await fetch(`${normalizedAPI_URL}api/post/trend`);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }

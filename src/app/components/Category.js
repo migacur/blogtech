@@ -2,9 +2,11 @@ import Link from "next/link";
 
 const API_URL = process.env.API_URL;
 
+const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+
 export async function loadCategory() {
     try {
-        const res = await fetch(`${API_URL}/api/post/category`);
+        const res = await fetch(`${normalizedAPI_URL}api/post/category`);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
