@@ -1,11 +1,11 @@
-const API_URL = process.env.API_URL;
+//const API_URL = process.env.API_URL;
 
 // Asegura que API_URL termine con "/"
-const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+//const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
 
 export async function loadPost() {
     try {
-        const res = await fetch(`${normalizedAPI_URL}api/post`, {
+        const res = await fetch("/api/post", {
             headers: { "Content-type": "application/json" }
         });
 

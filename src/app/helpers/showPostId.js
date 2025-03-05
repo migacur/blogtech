@@ -1,10 +1,10 @@
-const API_URL = process.env.API_URL;
+//const API_URL = process.env.API_URL;
 
-const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+//const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
 
 export async function showPostId(postId, userId) {
   try {
-    const res = await fetch(`${normalizedAPI_URL}api/post/${postId}?user_id=${userId}`, {
+    const res = await fetch(`/api/post/${postId}?user_id=${userId}`, {
       headers: { "Content-type": "application/json" },
     });
 
