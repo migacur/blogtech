@@ -1,6 +1,6 @@
 const nextConfig = {
   images: {
-    domains: [
+    remotePatterns: [
       'i.blogs.es',
       'mundodeportivo.com',
       'es.web.img3.acsta.net',
