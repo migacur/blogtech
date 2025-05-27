@@ -29,6 +29,7 @@ const Card = ({posts}) => {
   width={400}
   height={200}
   alt='Imagen de la publicación'
+  unoptimized 
   className={`pointer-events-none ${i === 0 ? 'w-[100%]' : 'w-[50%]'} h-full object-cover object-center max-sm:w-[100%]`} 
 />
 
