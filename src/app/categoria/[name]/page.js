@@ -5,12 +5,10 @@ import { Suspense } from 'react';
 import Spinner from "@/app/components/spinner/Spinner";
 import CategoryList from "@/app/components/CategoryList";
 
-//const API_URL = process.env.API_URL;
-
-//const normalizedAPI_URL = API_URL.endsWith('/') ? API_URL : `${API_URL}/`;
+const API_URL = process.env.API_URL;
 
 export async function loadData(name) {
-    const res = await fetch(`/api/post/category/${name}`);
+    const res = await fetch(`${API_URL}/api/post/category/${name}`);
     const data = await res.json();
     return data;
 }

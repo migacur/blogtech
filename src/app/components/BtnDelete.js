@@ -2,12 +2,15 @@
 import { useRouter } from 'next/navigation';
 import Swal  from 'sweetalert2';
 
+const API_URL = process.env.API_URL;
+
 const BtnDelete = ({postId}) => {
+  
 
     const router = useRouter()
 
     const eliminarPost = async postId => {
-        await fetch(`/api/post/${postId}`, {
+        await fetch(`${API_URL}/api/post/${postId}`, {
             method: "DELETE"
           })
             .then((response) => response.json()) // Parsea la respuesta como JSON
