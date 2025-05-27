@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 export async function GET(req) {
   try {
     // Obtener los datos del usuario del header
