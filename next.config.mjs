@@ -1,4 +1,5 @@
 const nextConfig = {
+   staticPageGenerationTimeout: 300,
   images: {
     remotePatterns: [
       { protocol: "https", 

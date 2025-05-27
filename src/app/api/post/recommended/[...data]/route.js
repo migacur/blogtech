@@ -18,17 +18,8 @@ export async function GET(request, { params }){
         ORDER BY publicaciones.fecha_publicado DESC
         LIMIT 5;
         `
-    
-        const results = await new Promise((resolve, reject) => {
-          database.query(query,[categoryId,postId],(error, results) => {
-            if (error) {
-              reject(error);
-            }else {
-              resolve(results);
-            }
-          });  
-        });
-  
+
+         const [results] = await database.query(query, [categoryId,postId]);
           return NextResponse.json({results,status:200});
           
   

@@ -15,16 +15,9 @@ export async function GET() {
       GROUP BY publicaciones.publicacion_id
       ORDER BY (publicaciones.visitas + contador_votos)/2 DESC LIMIT ?;
       `;
+
+      const [results] = await database.query(query, [limite]);
   
-      const results = await new Promise((resolve, reject) => {
-        database.query(query,[limite], (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        });
-      });
       return NextResponse.json(results, { status: 200 });
     } catch (error) {
       console.error(error);

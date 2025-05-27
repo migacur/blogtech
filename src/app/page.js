@@ -5,6 +5,8 @@ import { Suspense } from 'react';
 import Spinner from "./components/spinner/Spinner";
 import CategoryList from "./components/CategoryList";
 
+export const revalidate = 60; 
+
 export default async function Home() {
   const posts = await loadPost();
 

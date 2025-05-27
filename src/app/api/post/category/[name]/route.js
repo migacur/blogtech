@@ -12,18 +12,9 @@ export async function GET(request, { params }) {
         WHERE nombre_categoria = ?
         ORDER BY fecha_publicado DESC;
       `;
-  
-      const results = await new Promise((resolve, reject) => {
-        database.query(query, [category], (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        });
-      });
-    
-        return NextResponse.json(results,{status:200});
+
+      const [results] = await database.query(query, [category]);
+      return NextResponse.json(results,{status:200});
     } catch (error) {
       console.error(error);
       return NextResponse.json({ msg: 'Ocurrió un error en el servidor' });

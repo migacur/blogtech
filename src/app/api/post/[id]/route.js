@@ -31,21 +31,15 @@ FROM publicaciones
     ON votos_publicacion.postId = publicaciones.publicacion_id
     WHERE publicacion_id = ?;
       `;
-  
-      const results = await new Promise((resolve, reject) => {
-        database.query(query, [userId,postId], (error, results) => {
-          if (error) {
-            reject(error);
-          }else {
-            resolve(results);
-          }
-        });  
-      });
-      if (results) {
-        await updateViewsPost(postId)
-        return NextResponse.json(results,{status:200});
+
+      const [results] = await database
+            .query(query, [userId,postId]);
         
-    }
+     if (results) {
+        await updateViewsPost(postId)
+        return NextResponse.json(results,{status:200});    
+    }      
+  
     return NextResponse.redirect("/")
     
     } catch (error) {
@@ -84,17 +78,10 @@ FROM publicaciones
       WHERE publicacion_id = ?
       AND idUsuario = ?
       `;
-  
-      const results = await new Promise((resolve, reject) => {
-       database.query(query, [titulo,subtitulo,texto,categoria,postId,userId], (error, results) => {
-          if (error) {
-            reject(error);
-          }else {
-            resolve(results);
-          }
-        });
-      });
-  
+
+      const [results] = await database
+            .query(query, [titulo,subtitulo,texto,categoria,postId,userId]);
+      console.log(results)
       return NextResponse.json({msg:"Se ha modificado la publicación",status:200});
     } catch (error) {
       console.error(error);
@@ -124,16 +111,13 @@ FROM publicaciones
 
       const query = 'DELETE FROM publicaciones WHERE publicacion_id = ? AND idUsuario = ?';
   
-      const results = await new Promise((resolve, reject) => {
-        database.query(query, [postId,userId], (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        });
-      });
-  
+      const [results] = await database
+            .query(query, [postId,userId]);
+      
+      if(!results){
+         return NextResponse.json({msg:"Esta publicación no está disponible",status: 400});
+      }
+
       return NextResponse.json({msg:"Se ha eliminado la publicación",status: 200});
     } catch (error) {
       console.error(error);
