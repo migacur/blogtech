@@ -59,15 +59,7 @@ export async function GET() {
       
       const query = 'INSERT INTO usuarios(username,password,email) VALUES (?,?,?)';
   
-      const results = await new Promise((resolve, reject) => {
-        database.query(query,[username,hashPassword,email],(error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        });
-      });
+      const [results] = await database.query(query, [username,hashPassword,email]);
       return NextResponse.json({results, status: 200 });
     } catch (error) {
       console.error(error);

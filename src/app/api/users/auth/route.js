@@ -16,16 +16,8 @@ export async function POST(request) {
 
       const query = 'SELECT usuarios.usuario_id,usuarios.username,usuarios.password,usuarios.email FROM usuarios WHERE username = ?';
   
-      const results = await new Promise((resolve, reject) => {
-        database.query(query,[username],(error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        });
-      });
-      
+      const [results] = await database.query(query, [username]);
+
       if(results.length === 0){
         console.log(results.length)
         return NextResponse.json({ msg: 'No se ha encontrado el usuario'}, { status: 401});
