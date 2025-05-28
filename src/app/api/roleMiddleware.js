@@ -14,15 +14,7 @@ export async function roleMiddleware(request,userId,requiredRole) {
       WHERE usuario_id = ? AND rangos.nombre_rango = ?;
     `;
 
-    const results = await new Promise((resolve, reject) => {
-      database.query(query, [userId, requiredRole], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+     const [results] = await database.query(query,[userId, requiredRole]);
 
     if (results.length === 0) {
       return NextResponse.json(

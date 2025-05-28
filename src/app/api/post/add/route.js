@@ -14,17 +14,17 @@ export async function POST(request) {
   const categoria = data.get('categoria');
  
   try {
-
-     if(!token){
-            return NextResponse.json(
-              { msg: "Usuario no autorizado" },
-              { status: 401 }
-            );
-          }
-          const decoded = jwt.verify(token.value, process.env.JWT_SECRET);
-          const userId = decoded.userId
+    if (!token) {
+      return NextResponse.json(
+        { msg: "Usuario no autorizado" },
+        { status: 401 }
+      );
+    }
+    
+    const decoded = jwt.verify(token.value, process.env.JWT_SECRET);
+    const userId = decoded.userId;
    
-    const middlewareResponse = await roleMiddleware(request,userId,'Admin');
+    const middlewareResponse = await roleMiddleware(request, userId, 'Admin');
     if (middlewareResponse) {
       return middlewareResponse;
     }
@@ -39,7 +39,7 @@ export async function POST(request) {
       return NextResponse.json({ msg: "No se encontró la imagen", status: 400 });
     }
 
-    // Subir la imagen a Cloudinary
+    // Subir la imagen a Cloudinary (sin cambios, ya usa promesas)
     const bytes = await imagen.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -54,26 +54,44 @@ export async function POST(request) {
     });
     const imagenFinal = response.url;
 
-    // Insertar la publicación en la base de datos
-    const query = `
-      INSERT INTO publicaciones (titulo, subtitulo, imagen, texto, fecha_publicado, categoria, idUsuario)
-      VALUES (?, ?, ?, ?, NOW(), ?, ?);
-    `;
+    // Obtener conexión de la base de datos
+    const connection = await database.getConnection();
+    
+    try {
+      await connection.beginTransaction(); // Iniciar transacción
 
-    const results = await new Promise((resolve, reject) => {
-      database.query(query, [titulo, subtitulo, imagenFinal, contenido, categoria, userId], (error, results) => {
-        if (error) {
-          console.error("Error en la consulta SQL:", error);
-          reject(error);
-        } else {
-          resolve(results);
-        }
+      // Insertar la publicación en la base de datos usando mysql2/promise
+      const query = `
+        INSERT INTO publicaciones (titulo, subtitulo, imagen, texto, fecha_publicado, categoria, idUsuario)
+        VALUES (?, ?, ?, ?, NOW(), ?, ?);
+      `;
+      
+      const [results] = await connection.query(query, [
+        titulo, 
+        subtitulo, 
+        imagenFinal, 
+        contenido, 
+        categoria, 
+        userId
+      ]);
+      console.log(results)
+      await connection.commit(); // Confirmar transacción
+      
+      return NextResponse.json({ 
+        msg: "Publicación realizada exitosamente", 
+        status: 200 
       });
-    });
-
-    return NextResponse.json({ msg: "Publicación realizada exitosamente", status: 200 });
+    } catch (error) {
+      await connection.rollback(); // Revertir en caso de error
+      throw error; // Lanzar el error al catch principal
+    } finally {
+      connection.release(); // Liberar la conexión siempre
+    }
   } catch (error) {
     console.error("Error en el servidor:", error);
-    return NextResponse.json({ msg: "No se pudo realizar la publicación", status: 500 });
+    return NextResponse.json({ 
+      msg: "No se pudo realizar la publicación", 
+      status: 500 
+    });
   }
 }

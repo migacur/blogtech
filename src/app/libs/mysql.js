@@ -8,8 +8,8 @@ const database = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 3,
   queueLimit: 0,
-  idleTimeout: 10000, 
   enableKeepAlive: true,
+   keepAliveInitialDelay: 10000,
 });
 
 // Verificación de conexión al iniciar (opcional)
