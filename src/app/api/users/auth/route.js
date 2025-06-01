@@ -53,7 +53,7 @@ export async function POST(request) {
         value: token,
         httpOnly: true,
      secure: true,
-     sameSite: "strict",
+     sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       });
@@ -63,7 +63,7 @@ export async function POST(request) {
         value: JSON.stringify(usuario),
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+       sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       });
