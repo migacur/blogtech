@@ -1,54 +1,44 @@
-import { cookies } from "next/headers";
-export const dynamic = 'force-dynamic';
-
-function deleteCookies() {
-  const cookieStore = cookies();
-  cookieStore.delete('myToken');
-  cookieStore.delete('usuario');
-}
+import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 export async function GET(req) {
   try {
-    // Obtener los datos del usuario del header
-    const userDataHeader = req.headers.get('x-user-data');
+    // Obtener el token de las cookies
+    const token = req.cookies.get('myToken')?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { msg: 'No autenticado' },
+        { status: 401 }
+      );
+    }
+
+    // Verificar el token JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Verificar si el header existe
-    if (!userDataHeader) {
-       deleteCookies()
-      return new Response(JSON.stringify({ msg: 'No se encontraron datos del usuario en el header' }), { 
-        status: 401});
-    }
-
-    // Parsear los datos del usuario
-    const userData = JSON.parse(userDataHeader);
-
-    // Validar que los datos del usuario sean un objeto y contengan información válida
-    if (typeof userData !== 'object' || userData === null || Object.keys(userData).length === 0) {
-      deleteCookies()
-      return new Response(JSON.stringify({ msg: 'Datos del usuario no válidos' }), { 
-        status: 400});
-    }
-
-    // Devolver los datos del usuario si todo está bien
-    return new Response(JSON.stringify(userData), { 
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-  } catch (error) {
-    // Manejar cualquier error inesperado
-    console.error('Error en el endpoint GET:', error);
-    deleteCookies()
-      return new Response(
-      JSON.stringify({ msg: 'Error interno del servidor' }),
+    // Devolver los datos del usuario
+    return NextResponse.json(
       {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
+        id: decoded.userId,
+        name: decoded.username
+      },
+      { status: 200 }
+    );
+    
+  } catch (error) {
+    console.error('Error en verify:', error);
+    
+    // Manejar token expirado específicamente
+    if (error instanceof jwt.TokenExpiredError) {
+      return NextResponse.json(
+        { msg: 'Token expirado' },
+        { status: 401 }
+      );
+    }
+    
+    return NextResponse.json(
+      { msg: 'Token inválido' },
+      { status: 401 }
     );
   }
 }

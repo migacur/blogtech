@@ -1,44 +1,69 @@
-import { jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
 export async function middleware(request) {
-  const rutas = ["/","/api/users/verify", "/post/:id", "/editar/:path*", "/publicar"];
-  const jwt = request.cookies.get("myToken");
+  const jwt = request.cookies.get('myToken')?.value;
+  const path = request.nextUrl.pathname;
 
-  console.log('Middleware - Ruta solicitada:', request.nextUrl.pathname); // Depuración
-  console.log('Middleware - Token recibido:', jwt); // Depuración
+  // 1. Rutas públicas que no requieren autenticación
+  const publicPaths = [
+    '/', 
+    '/ingresar', 
+    '/registrar',
+    '/api/users/login',
+    '/api/users/verify' // ¡Importante! Esta debe ser pública
+  ];
 
-  // Si la ruta no requiere autenticación, continúa
-  if (!rutas.includes(request.nextUrl.pathname)) {
+  // 2. Verificar si es una ruta pública
+  if (publicPaths.includes(path) || path.startsWith('/public/')) {
     return NextResponse.next();
   }
 
-  // Si no hay token y la ruta requiere autenticación, devuelve un JSON
-  if (!jwt) {
-    console.log('Middleware - Token no proporcionado, redirigiendo a /ingresar'); // Depuración
-    return NextResponse.redirect(new URL("/ingresar", request.url));
-  }
+  // 3. Determinar si es una ruta API
+  const isApiRoute = path.startsWith('/api/');
 
   try {
-    // Verifica el token JWT
+    // 4. Verificar token para rutas protegidas
+    if (!jwt) throw new Error('No token');
+
+    // 5. Verificar el token JWT
     const { payload } = await jwtVerify(
-      jwt.value,
+      jwt,
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
 
-    console.log('Middleware - Token válido, usuario:', payload.userId); // Depuración
+    console.log('Token válido para usuario:', payload.userId);
 
-    // Agrega los datos del usuario al header
-    const response = NextResponse.next();
-    response.headers.set('x-user-data', JSON.stringify(payload));
+    // 6. Para rutas API: agregar user-id al header
+    if (isApiRoute) {
+      const response = NextResponse.next();
+      response.headers.set('x-user-id', payload.userId);
+      return response;
+    }
+
+    return NextResponse.next();
     
-    return response;
   } catch (error) {
-    console.log('Middleware - Token inválido, redirigiendo a /ingresar'); // Depuración
+    console.log('Error de autenticación:', error.message);
+    
+    // 7. Manejo diferente para rutas API vs páginas
+    if (isApiRoute) {
+      return new NextResponse(
+        JSON.stringify({ error: 'No autorizado' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 8. Para rutas de página, redirigir a login
     return NextResponse.redirect(new URL("/ingresar", request.url));
   }
 }
 
 export const config = {
-  matcher: ["/api/users/verify","/api/users/profile", "/post/:id", "/editar/:path*", "/publicar"],
+  matcher: [
+    '/post/:path*',
+    '/editar/:path*',
+    '/publicar',
+    '/api/users/profile'
+  ]
 };

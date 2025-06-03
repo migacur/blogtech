@@ -1,47 +1,24 @@
 "use client";
 import Link from "next/link";
 import Logout from "./Logout";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { ContextoUsuario } from "@/context/authContext";
-import { useRouter } from "next/navigation";
-import NotFound from "./NotFound";
 
 const Navbar = ({ setShowPerfil, showPerfil, handleMouseLeave }) => {
-  const { usuario, autenticarUser } = useContext(ContextoUsuario);
-  const router = useRouter();
-  const [verificandoAutenticacion, setVerificandoAutenticacion] = useState(true);
-
-  useEffect(() => {
-    const rutasPublicas = ["/", "/ingresar", "/registrar"];
-    const currentPath = window.location.pathname;
-
-    const verificarAutenticacion = async () => {
-      try {
-        const autenticado = await autenticarUser();
-        if (!autenticado && !rutasPublicas.includes(currentPath)) {
-          router.push("/ingresar");
-        }
-      } catch (error) {
-        console.error("Error al verificar autenticación:", error);
-        return <NotFound message="Ocurrió un error al verificar la sesión del usuario" />;
-      } finally {
-        setVerificandoAutenticacion(false);
-      }
-    };
-
-    if (!usuario) {
-      verificarAutenticacion();
-    } else {
-      setVerificandoAutenticacion(false);
-    }
-  }, [usuario, autenticarUser, router]);
+  const { usuario, loading } = useContext(ContextoUsuario);
 
   const handleMouseEnter = () => setShowPerfil(true);
 
   return (
     <nav>
       <ul className="flex px-2 text-[.9rem] font-semibold relative z-20">
-        {verificandoAutenticacion ? null : usuario ? (
+        {loading ? (
+          // Estado de carga
+          <li className="mr-4">
+            <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+          </li>
+        ) : usuario ? (
+          // Usuario autenticado
           <>
             <li className="hover:text-[#01C29A] mr-4">
               <Link href="/">Inicio</Link>
@@ -83,6 +60,7 @@ const Navbar = ({ setShowPerfil, showPerfil, handleMouseLeave }) => {
             )}
           </>
         ) : (
+          // Usuario no autenticado
           <>
             <li className="hover:text-[#01C29A] mr-4">
               <Link href="/ingresar">Ingresar</Link>
