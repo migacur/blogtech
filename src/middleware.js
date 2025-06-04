@@ -45,6 +45,14 @@ export async function middleware(request) {
     
   } catch (error) {
     console.log('Error de autenticación:', error.message);
+
+      if (error instanceof jwt.TokenExpiredError) {
+    // Limpiar cookies expiradas
+    const response = NextResponse.redirect(new URL("/ingresar", request.url));
+    response.cookies.delete('myToken');
+    
+    return response;
+    }
     
     // 7. Manejo diferente para rutas API vs páginas
     if (isApiRoute) {
