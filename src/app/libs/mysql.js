@@ -5,27 +5,64 @@ const database = mysql.createPool({
   user: process.env.USER,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
+  
+  // Ajustes críticos para Clever Cloud
   waitForConnections: true,
-  connectionLimit: 3,
-  queueLimit: 0,
+  connectionLimit: 2,           // Reducido a 2 conexiones (más seguro para plan gratuito)
+  queueLimit: 5,                // Límite de cola reducido
+  connectTimeout: 30000,        // 30 segundos para conectar
+  acquireTimeout: 30000,        // Nuevo: tiempo para obtener conexión
+  idleTimeout: 55000,           // 55s < 60s de Clever Cloud
   enableKeepAlive: true,
-   keepAliveInitialDelay: 10000,
+  keepAliveInitialDelay: 30000, // 30 segundos
+  timezone: 'Z',                // Usar UTC
+  
+  // Importante para evitar desconexiones
+  ssl: {
+    rejectUnauthorized: true
+  }
 });
 
-// Verificación de conexión al iniciar (opcional)
+// Manejo avanzado de eventos
+database.on('acquire', (connection) => {
+  console.log(`Conexión adquirida: ${connection.threadId}`);
+});
+
+database.on('release', (connection) => {
+  console.log(`Conexión liberada: ${connection.threadId}`);
+});
+
+database.on('connection', (connection) => {
+  // Ejecutar consulta keep-alive cada 40 segundos
+  setInterval(async () => {
+    try {
+      await connection.query('SELECT 1');
+      console.log('Keep-alive ejecutado');
+    } catch (error) {
+      console.error('Error en keep-alive:', error);
+    }
+  }, 40000);
+});
+
+database.on('error', (err) => {
+  console.error('Error en el pool de MySQL:', err);
+});
+
+// Verificación de conexión
 async function verificarConexion() {
-  let connection;
   try {
-    connection = await database.getConnection();
-    await connection.query("SELECT 1"); // 👈 Consulta de prueba
+    const connection = await database.getConnection();
+    await connection.query("SELECT 1");
     console.log("✅ Conexión exitosa a la BBDD");
+    connection.release();
   } catch (error) {
     console.error("❌ Error al conectar a la BBDD:", error.message);
-  } finally {
-    if (connection) connection.release(); // 👈 Libera la conexión, no el pool
+    
+    // Reconexión automática después de 5 segundos
+    setTimeout(verificarConexion, 5000);
   }
 }
 
 verificarConexion();
 
-module.exports = database;
+export default database;
