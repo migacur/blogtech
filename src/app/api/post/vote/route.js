@@ -49,6 +49,12 @@ export async function POST(request) {
         );
         
         // Luego insertamos el nuevo voto
+        console.log("---INICIO PRUEBA VOTOS LIKES---")
+        console.log(`La id del post es: ${postId} y el id del user es: ${userId}`)
+         console.log(typeof postId, typeof userId)
+        console.log(data)
+        console.log(data.condition)
+        console.log("---FIN PRUEBA VOTOS LIKES---")
         await connection.query(
           `INSERT INTO votos_publicacion 
           (positivo, negativo, postId, userId) 
