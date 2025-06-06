@@ -18,7 +18,7 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
         postId,
         userId,
       };
-
+      console.log(data)
       const response = await fetch("/api/post/vote", {
         method: "POST",
         credentials: "include",
