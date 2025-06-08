@@ -4,8 +4,8 @@ import { revalidateTag } from "next/cache";
 
 export async function POST(request) {
   const data = await request.json();
-  const postId = data.postId;
-  const userId = data.userId;
+  const postId = Number(data.postId);
+  const userId = Number(data.userId);
 
   if(typeof postId !== 'number' || typeof userId !== 'number' || !data){
      return NextResponse.json({ 
