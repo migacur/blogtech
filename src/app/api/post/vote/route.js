@@ -41,7 +41,7 @@ export async function POST(request) {
         );
         
         await connection.commit();
-        revalidatePath(`/post/${postId}`);
+         revalidateTag(`post-${postId}`);
         return NextResponse.json({ 
           msg: "Has eliminado el voto correctamente", 
           status: 200 
