@@ -1,11 +1,20 @@
 import database from "@/app/libs/mysql";
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function POST(request) {
   const data = await request.json();
   const postId = data.postId;
   const userId = data.userId;
+
+  if(typeof postId !== 'number' || typeof userId !== 'number' || 
+      (data.condition !== 'like' && data.condition !== 'dislike')
+  ){
+     return NextResponse.json({ 
+          msg: "Los datos recibidos no son correctos", 
+          status: 400 
+        });
+  }
 
   // Obtenemos una conexión del pool
   const connection = await database.getConnection();
@@ -68,7 +77,7 @@ export async function POST(request) {
         );
         
         await connection.commit();
-        revalidatePath(`/post/${postId}`);
+        revalidateTag(`post-${postId}`);
         return NextResponse.json({ 
           msg: "Has cambiado tu voto correctamente", 
           status: 200 
@@ -90,7 +99,7 @@ export async function POST(request) {
       );
       
       await connection.commit();
-      revalidatePath(`/post/${postId}`);
+     revalidateTag(`post-${postId}`);
       return NextResponse.json({ 
         msg: "Has votado esta publicación correctamente", 
         status: 200 
