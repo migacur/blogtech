@@ -7,9 +7,7 @@ export async function POST(request) {
   const postId = data.postId;
   const userId = data.userId;
 
-  if(typeof postId !== 'number' || typeof userId !== 'number' || 
-      (data.condition !== 'like' && data.condition !== 'dislike')
-  ){
+  if(typeof postId !== 'number' || typeof userId !== 'number' || !data){
      return NextResponse.json({ 
           msg: "Los datos recibidos no son correctos", 
           status: 400 
