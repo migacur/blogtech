@@ -62,7 +62,7 @@ export default async function PostWrapper({ params }) {
       post={post} 
       params={params} 
       userLogin={userLogin} 
-      cantidadVotos={post.cantidad_votos}
+      cantidadVotos={Number(post.cantidad_votos)}
     />
 
 </div>
