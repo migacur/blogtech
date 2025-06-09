@@ -3,7 +3,9 @@ const API_URL = process.env.API_URL;
 export async function showPostId(postId, userId) {
   try {
     const res = await fetch(`${API_URL}/api/post/${postId}?user_id=${userId}`, {
-      next: { tags: [`post-${postId}`] },
+      next: { tags: [`post-${postId}`],
+      revalidate: 0
+    },
       headers: { "Content-type": "application/json" },
     });
 
