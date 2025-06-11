@@ -1,87 +1,88 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import Like from "./Svg/Like";
 import Dislike from "./Svg/Dislike";
 import { colorVotos } from "../helpers/colorVotos";
 
-const Voto = ({ postId, userId, initialVote, votos, actualizarVotos }) => {
+const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => {
   const [vote, setVote] = useState(initialVote || null);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Sincroniza el estado local cuando cambia initialVote
-  useEffect(() => {
-    setVote(initialVote || null);
-  }, [initialVote]);
 
   const handleVote = useCallback(async (voteType) => {
     setIsLoading(true);
 
     try {
+      const data = {
+        condition: voteType,
+        postId,
+        userId,
+      };
+      console.log(data)
       const response = await fetch("/api/post/vote", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          condition: voteType,
-          postId,
-          userId
-        })
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        Swal.fire({ title: "", text: data.msg, icon: "success" });
-        
-        // Actualización optimista
+        const jsonResponse = await response.json();
+        Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
+
+        // Actualiza el estado local
         const newVote = vote === voteType ? null : voteType;
         setVote(newVote);
-        
-        // Notificar al componente padre
+
+        // Llama a actualizarVotos con el nuevo voto
         actualizarVotos(newVote);
       } else {
-        throw new Error(data.msg || "Error al votar");
+        const errorData = await response.json();
+        Swal.fire({
+          title: "",
+          text: errorData.msg || "Error al registrar el voto",
+          icon: "error",
+        });
       }
-    } catch (error) {
-      Swal.fire({ title: "", text: error.message, icon: "error" });
-      // Revertir a valor anterior en caso de error
-      setVote(initialVote);
+    } catch (e) {
+      console.error("Error en la solicitud:", e);
+      Swal.fire({
+        title: "",
+        text: "Ha ocurrido un error al realizar esta acción",
+        icon: "error",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [postId, userId, vote, initialVote, actualizarVotos]);
+  }, [postId, userId, vote, actualizarVotos]);
 
   return (
-    <div className="flex items-center">
-      <button
+    <div className="flex items-center ">
+      <div
         onClick={() => handleVote("like")}
-        className={`bg-slate-200 text-[#404040] font-bold rounded-md p-2 flex justify-center items-center ${
-          vote === "like" 
-            ? "shadow-md text-green-600 bg-slate-300" 
-            : "hover:bg-slate-300"
-        } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        className={`bg-slate-200 text-[#404040] font-bold rounded-md p-2 flex justify-center items-center cursor-pointer ${
+          vote === "like" && "shadow-md text-green-600  bg-slate-300"
+        }`}
+        aria-pressed={vote === "like"}
         disabled={isLoading}
       >
-        <Like active={vote === "like"} />
+        <Like clase={vote} />
         Si
-      </button>
-      
-      <p className={`text-[1.1rem] mx-3 font-bold ${colorVotos(votos)}`}>
-        {votos || 0}
-      </p>
-      
-      <button
+      </div>
+      <p className={`text-[1.1rem] mx-3 font-bold  ${colorVotos(votos)}`}>{votos || 0}</p>
+      <div
         onClick={() => handleVote("dislike")}
-        className={`bg-slate-200 rounded-md p-2 text-[#404040] font-bold flex justify-center items-center ${
-          vote === "dislike" 
-            ? "shadow-md text-red-600 bg-slate-300" 
-            : "hover:bg-slate-300"
-        } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        className={`bg-slate-200 rounded-md p-2 text-[#404040] font-bold flex justify-center items-center cursor-pointer ${
+          vote === "dislike" && " shadow-md text-red-600  bg-slate-300"
+        }`}
+        aria-pressed={vote === "dislike"}
         disabled={isLoading}
       >
-        <Dislike active={vote === "dislike"} />
+        <Dislike clase={vote} />
         No
-      </button>
+      </div>
     </div>
   );
 };

@@ -9,31 +9,34 @@ import Image from 'next/image'
 import styles from '@/app/post/[id]/page.module.css';
 
 const Post = ({post,params,userLogin,cantidadVotos}) => {
-    // Estado separado para likes/dislikes
-  const [votes, setVotes] = useState({
-    likes: post.likes || 0,
-    dislikes: post.dislikes || 0
-  });
-  
-  const [userVote, setUserVote] = useState(post.resultado_voto || null);
+  const [votos, setVotos] = useState(cantidadVotos);
+  const [votoAnterior, setVotoAnterior] = useState(post.resultado_voto || null);
 
-  const actualizarVotos = useCallback((newVote) => {
-    setVotes(prev => {
-      // Calcula la diferencia basada en el voto anterior
-      const likeDiff = (userVote === 'like' ? -1 : 0) + (newVote === 'like' ? 1 : 0);
-      const dislikeDiff = (userVote === 'dislike' ? -1 : 0) + (newVote === 'dislike' ? 1 : 0);
-      
-      return {
-        likes: prev.likes + likeDiff,
-        dislikes: prev.dislikes + dislikeDiff
-      };
+  const actualizarVotos = useCallback((nuevoVoto) => {
+    setVotos((prevVotos) => {
+      let nuevoTotal = prevVotos;
+
+      // Si el usuario tenía un voto previo, ajusta el total
+      if (votoAnterior === "like") {
+        nuevoTotal -= 1; // Elimina el like anterior
+      } else if (votoAnterior === "dislike") {
+        nuevoTotal += 1; // Elimina el dislike anterior
+      }
+
+      // Agrega el nuevo voto
+      if (nuevoVoto === "like") {
+        nuevoTotal += 1;
+      } else if (nuevoVoto === "dislike") {
+        nuevoTotal -= 1;
+      }
+
+      // Actualiza el voto anterior
+      setVotoAnterior(nuevoVoto);
+
+      return nuevoTotal;
     });
-    
-    setUserVote(newVote);
-  }, [userVote]);
+  }, [votoAnterior]);
 
-  // Calcula el total neto (opcional, si lo necesitas para mostrar)
-  const votosNetos = votes.likes - votes.dislikes;
   return (
 
     <div className="w-full mt-9 text-[#404040] mb-[-2.5rem] md:mb-0 ">
@@ -70,12 +73,13 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
         <p className='text-1xl font-bold text-[#404040]'>¿Te gustó la publicación?</p>
         <div className='flex mt-2 mb-4 items-center'>
           <div className='flex flex-col justify-center items-center '>
-        <Voto
-            postId={params.id}
-            userId={userLogin.id}
-            initialVote={userVote}
-            votos={votosNetos} // O usa votes.likes y votes.dislikes si prefieres mostrar separados
-            actualizarVotos={actualizarVotos}
+          <Voto
+          post={post}
+          postId={params.id}
+          userId={userLogin.id}
+          initialVote={post.resultado_voto}
+          votos={votos}
+          actualizarVotos={actualizarVotos}
           />
           </div>
         </div>
