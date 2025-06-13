@@ -5,7 +5,7 @@ import Like from "./Svg/Like";
 import Dislike from "./Svg/Dislike";
 import { colorVotos } from "../helpers/colorVotos";
 import { revalidateTag } from "next/cache";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => {
   const [vote, setVote] = useState(initialVote || null);
@@ -34,14 +34,13 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
       if (response.ok) {
         const jsonResponse = await response.json();
         Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
-
+        await revalidateTag(`post-${postId}`);  
         // Actualiza el estado local
         const newVote = vote === voteType ? null : voteType;
         setVote(newVote);
 
         // Llama a actualizarVotos con el nuevo voto
         actualizarVotos(newVote);
-        await revalidateTag(`post-${postId}`); // Llamada desde el frontend
         router.refresh();
       } else {
         const errorData = await response.json();
