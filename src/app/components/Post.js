@@ -13,29 +13,14 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
   const [votoAnterior, setVotoAnterior] = useState(post.resultado_voto || null);
 
   const actualizarVotos = useCallback((nuevoVoto) => {
-    setVotos((prevVotos) => {
-      let nuevoTotal = prevVotos;
+  setVotos((prevVotos) => {
+    const cambioPorVotoAnterior = votoAnterior === "like" ? -1 : votoAnterior === "dislike" ? +1 : 0;
+    const cambioPorNuevoVoto = nuevoVoto === "like" ? +1 : nuevoVoto === "dislike" ? -1 : 0;
+    return prevVotos + cambioPorVotoAnterior + cambioPorNuevoVoto;
+  });
 
-      // Si el usuario tenía un voto previo, ajusta el total
-      if (votoAnterior === "like") {
-        nuevoTotal -= 1; // Elimina el like anterior
-      } else if (votoAnterior === "dislike") {
-        nuevoTotal += 1; // Elimina el dislike anterior
-      }
-
-      // Agrega el nuevo voto
-      if (nuevoVoto === "like") {
-        nuevoTotal += 1;
-      } else if (nuevoVoto === "dislike") {
-        nuevoTotal -= 1;
-      }
-
-      // Actualiza el voto anterior
-      setVotoAnterior(nuevoVoto);
-
-      return nuevoTotal;
-    });
-  }, [votoAnterior]);
+  setVotoAnterior(nuevoVoto === votoAnterior ? null : nuevoVoto); // Alternar voto
+}, [votoAnterior]);
 
   return (
 
