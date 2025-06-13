@@ -3,7 +3,8 @@ const API_URL = process.env.API_URL;
 export async function loadPost() {
     try {
         const res = await fetch(`${API_URL}/api/post`, {
-            headers: { "Content-type": "application/json" }
+            headers: { "Content-type": "application/json" },
+            cache: "no-store"
         });
 
         if (!res.ok) {

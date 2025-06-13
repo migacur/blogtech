@@ -4,10 +4,13 @@ import Swal from "sweetalert2";
 import Like from "./Svg/Like";
 import Dislike from "./Svg/Dislike";
 import { colorVotos } from "../helpers/colorVotos";
+import { revalidateTag } from "next/cache";
+import { useRouter } from "next/router";
 
 const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => {
   const [vote, setVote] = useState(initialVote || null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
 
   const handleVote = useCallback(async (voteType) => {
     setIsLoading(true);
@@ -38,6 +41,8 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
 
         // Llama a actualizarVotos con el nuevo voto
         actualizarVotos(newVote);
+        await revalidateTag(`post-${postId}`); // Llamada desde el frontend
+        router.refresh();
       } else {
         const errorData = await response.json();
         Swal.fire({

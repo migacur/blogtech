@@ -64,7 +64,7 @@ const FormAdd = () => {
               icon: 'error',
             })
           }
-      
+        setIsLoad(true)
         })
         .catch((error) => {
           Swal.fire({
@@ -74,7 +74,7 @@ const FormAdd = () => {
           })
         });
 
-
+        setIsLoad(true)
     }
 
   return (
