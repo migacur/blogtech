@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import Like from "./Svg/Like";
 import Dislike from "./Svg/Dislike";
 import { colorVotos } from "../helpers/colorVotos";
-import { revalidateTag } from "next/cache";
 import { useRouter } from "next/navigation";
 
 const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => {
@@ -34,7 +33,6 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
       if (response.ok) {
         const jsonResponse = await response.json();
         Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
-        await revalidateTag(`post-${postId}`);  
         // Actualiza el estado local
         const newVote = vote === voteType ? null : voteType;
         setVote(newVote);
