@@ -12,23 +12,14 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
   const [votos, setVotos] = useState(cantidadVotos);
   const [votoAnterior, setVotoAnterior] = useState(post.resultado_voto || null);
 
- const actualizarVotos = useCallback((nuevoVoto) => {
+  const actualizarVotos = useCallback((nuevoVoto) => {
   setVotos((prevVotos) => {
-    // Caso 1: Estaba like y vuelve a dar like (quitar voto)
-    if (votoAnterior === nuevoVoto) {
-      return nuevoVoto === "like" ? prevVotos - 1 : prevVotos + 1;
-    } 
-    // Caso 2: Cambia de voto (like ↔ dislike)
-    else if (votoAnterior) {
-      return nuevoVoto === "like" ? prevVotos + 2 : prevVotos - 2;
-    } 
-    // Caso 3: Vota por primera vez
-    else {
-      return nuevoVoto === "like" ? prevVotos + 1 : prevVotos - 1;
-    }
+    const cambioPorVotoAnterior = votoAnterior === "like" ? -1 : votoAnterior === "dislike" ? +1 : 0;
+    const cambioPorNuevoVoto = nuevoVoto === "like" ? +1 : nuevoVoto === "dislike" ? -1 : 0;
+    return prevVotos + cambioPorVotoAnterior + cambioPorNuevoVoto;
   });
 
-  setVotoAnterior(nuevoVoto === votoAnterior ? null : nuevoVoto);
+  setVotoAnterior(nuevoVoto === votoAnterior ? null : nuevoVoto); // Alternar voto
 }, [votoAnterior]);
 
   return (
