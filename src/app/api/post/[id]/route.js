@@ -16,24 +16,31 @@ console.log( userId )
     try {
 
       const query = `
-   SELECT publicaciones.*, categorias.nombre_categoria,usuarios.usuario_id,usuarios.username AS autor,SUM(votos_publicacion.positivo)-SUM(votos_publicacion.negativo) AS cantidad_votos, 
-  CASE 
-    WHEN votos_publicacion.userId = ? THEN
-      CASE 
-        WHEN votos_publicacion.positivo = 1 THEN 'like'
-        WHEN votos_publicacion.negativo = 1 THEN 'dislike'
-        ELSE NULL
-      END
-    ELSE NULL
-  END as resultado_voto
+  SELECT 
+  publicaciones.*, 
+  categorias.nombre_categoria,
+  usuarios.usuario_id,
+  usuarios.username AS autor,
+  SUM(votos_publicacion.positivo) - SUM(votos_publicacion.negativo) AS cantidad_votos,
+  MAX(
+    CASE 
+      WHEN votos_publicacion.userId = ? THEN
+        CASE 
+          WHEN votos_publicacion.positivo = 1 THEN 'like'
+          WHEN votos_publicacion.negativo = 1 THEN 'dislike'
+        END
+    END
+  ) AS resultado_voto
 FROM publicaciones 
-    LEFT JOIN categorias 
-    ON publicaciones.categoria = categorias.categoria_id
-    LEFT JOIN usuarios
-    ON publicaciones.idUsuario = usuarios.usuario_id
-    LEFT JOIN votos_publicacion
-    ON votos_publicacion.postId = publicaciones.publicacion_id
-    WHERE publicacion_id = ?;
+LEFT JOIN categorias ON publicaciones.categoria = categorias.categoria_id
+LEFT JOIN usuarios ON publicaciones.idUsuario = usuarios.usuario_id
+LEFT JOIN votos_publicacion ON votos_publicacion.postId = publicaciones.publicacion_id
+WHERE publicaciones.publicacion_id = ?
+GROUP BY 
+  publicaciones.publicacion_id, 
+  categorias.nombre_categoria, 
+  usuarios.usuario_id, 
+  usuarios.username;
       `;
 
       const [results] = await database
