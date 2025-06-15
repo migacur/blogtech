@@ -62,9 +62,9 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
           post={post}
           postId={params.id}
           userId={userLogin.id}
-          initialVote={post.resultado_voto}
-          votos={votos}
-          actualizarVotos={actualizarVotos}
+        //  initialVote={post.resultado_voto}
+        //  votos={votos}
+         // actualizarVotos={actualizarVotos}
           />
           </div>
         </div>

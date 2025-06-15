@@ -6,8 +6,8 @@ import Dislike from "./Svg/Dislike";
 import { colorVotos } from "../helpers/colorVotos";
 import { useRouter } from "next/navigation";
 
-const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => {
-  const [vote, setVote] = useState(initialVote || null);
+const Voto = ({ post, postId, userId }) => {
+  //const [vote, setVote] = useState(initialVote || null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
 
@@ -34,11 +34,11 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
         const jsonResponse = await response.json();
         Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
         // Actualiza el estado local
-        const newVote = vote === voteType ? null : voteType;
-        setVote(newVote);
+       //const newVote = vote === voteType ? null : voteType;
+      // setVote(newVote);
 
         // Llama a actualizarVotos con el nuevo voto
-        actualizarVotos(newVote);
+      //  actualizarVotos(newVote);
         router.refresh();
       } else {
         const errorData = await response.json();
@@ -58,31 +58,31 @@ const Voto = ({ post, postId, userId, initialVote, votos, actualizarVotos }) => 
     } finally {
       setIsLoading(false);
     }
-  }, [postId, userId, vote, actualizarVotos]);
+  }, [postId,userId,router]);
 
   return (
     <div className="flex items-center ">
       <div
         onClick={() => handleVote("like")}
         className={`bg-slate-200 text-[#404040] font-bold rounded-md p-2 flex justify-center items-center cursor-pointer ${
-          vote === "like" && "shadow-md text-green-600  bg-slate-300"
+          post?.resultado_voto === "like" && "shadow-md text-green-600  bg-slate-300"
         }`}
-        aria-pressed={vote === "like"}
+        aria-pressed={post?.resultado_voto === "like"}
         disabled={isLoading}
       >
-        <Like clase={vote} />
+        <Like clase={post?.resultado_voto} />
         Si
       </div>
-      <p className={`text-[1.1rem] mx-3 font-bold  ${colorVotos(votos)}`}>{votos || 0}</p>
+      <p className={`text-[1.1rem] mx-3 font-bold  ${colorVotos(post?.cantidad_votos)}`}>{post?.cantidad_votos || 0}</p>
       <div
         onClick={() => handleVote("dislike")}
         className={`bg-slate-200 rounded-md p-2 text-[#404040] font-bold flex justify-center items-center cursor-pointer ${
-          vote === "dislike" && " shadow-md text-red-600  bg-slate-300"
+          post?.resultado_voto === "dislike" && " shadow-md text-red-600  bg-slate-300"
         }`}
-        aria-pressed={vote === "dislike"}
+        aria-pressed={post?.resultado_voto === "dislike"}
         disabled={isLoading}
       >
-        <Dislike clase={vote} />
+        <Dislike clase={post?.resultado_voto} />
         No
       </div>
     </div>
