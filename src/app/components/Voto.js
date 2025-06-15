@@ -11,54 +11,35 @@ const Voto = ({ post, postId, userId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
 
-  const handleVote = useCallback(async (voteType) => {
-    setIsLoading(true);
+ const handleVote = async (voteType) => {
+  setIsLoading(true);
+  console.log("--- VOTETYPE ---- ")
+  console.log(voteType)
+   console.log("--- VOTETYPE ---- ")
+  try {
+    const data = { condition: voteType, postId, userId };
+    const response = await fetch("/api/post/vote", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-    try {
-      const data = {
-        condition: voteType,
-        postId,
-        userId,
-      };
-      console.log(data)
-      const response = await fetch("/api/post/vote", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        const jsonResponse = await response.json();
-        Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
-        // Actualiza el estado local
-       //const newVote = vote === voteType ? null : voteType;
-      // setVote(newVote);
-
-        // Llama a actualizarVotos con el nuevo voto
-      //  actualizarVotos(newVote);
-        router.refresh();
-      } else {
-        const errorData = await response.json();
-        Swal.fire({
-          title: "",
-          text: errorData.msg || "Error al registrar el voto",
-          icon: "error",
-        });
-      }
-    } catch (e) {
-      console.error("Error en la solicitud:", e);
-      Swal.fire({
-        title: "",
-        text: "Ha ocurrido un error al realizar esta acción",
-        icon: "error",
-      });
-    } finally {
-      setIsLoading(false);
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      Swal.fire({ title: "", text: jsonResponse.msg, icon: "success" });
+      router.refresh(); // Recarga los datos del servidor
+    } else {
+      const errorData = await response.json();
+      Swal.fire({ title: "", text: errorData.msg || "Error al registrar el voto", icon: "error" });
     }
-  }, [postId,userId,router]);
+  } catch (e) {
+    console.error("Error en la solicitud:", e);
+    Swal.fire({ title: "", text: "Ha ocurrido un error al realizar esta acción", icon: "error" });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="flex items-center ">
