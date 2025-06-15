@@ -1,6 +1,6 @@
 import database from "@/app/libs/mysql";
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+//import { revalidateTag } from "next/cache";
 
 export async function POST(request) {
   const data = await request.json();
@@ -41,7 +41,7 @@ export async function POST(request) {
         );
         
         await connection.commit();
-         revalidateTag(`post-${postId}`);
+        // revalidateTag(`post-${postId}`);
         return NextResponse.json({ 
           msg: "Has eliminado el voto correctamente", 
           status: 200 
@@ -75,7 +75,7 @@ export async function POST(request) {
         );
         
         await connection.commit();
-        revalidateTag(`post-${postId}`);
+       // revalidateTag(`post-${postId}`);
         return NextResponse.json({ 
           msg: "Has cambiado tu voto correctamente", 
           status: 200 
@@ -97,7 +97,7 @@ export async function POST(request) {
       );
       
       await connection.commit();
-     revalidateTag(`post-${postId}`);
+   //  revalidateTag(`post-${postId}`);
       return NextResponse.json({ 
         msg: "Has votado esta publicación correctamente", 
         status: 200 

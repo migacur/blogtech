@@ -8,8 +8,11 @@ export async function GET(request, { params }) {
 
  const postId = params.id;
  const { searchParams } = new URL(request.url); 
- const userId = searchParams.get('user_id'); 
-
+ const userId = searchParams.get('user_id');  // usuario logueado
+ console.log("--- ID DEL USUARIO ENDPOINT POST:ID")
+console.log( userId )
+ console.log("--- ID DEL USUARIO ENDPOINT POST:ID")
+// tengo que obtener el id del votante no del creador de post
     try {
 
       const query = `

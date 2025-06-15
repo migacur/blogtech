@@ -2,12 +2,10 @@ const API_URL = process.env.API_URL;
 
 export async function showPostId(postId, userId) {
   try {
-    const res = await fetch(`${API_URL}/api/post/${postId}?user_id=${userId}`, {
-      cache: "no-store",
-      next: { tags: [`post-${postId}`]
-    },
-      headers: { "Content-type": "application/json" },
-    });
+   const res = await fetch(`${API_URL}/api/post/${postId}?user_id=${userId}`, {
+  cache: "no-store", 
+  headers: { "Content-Type": "application/json" },
+});
 
     if (!res.ok) {
       throw new Error(`Error: ${res.status} - ${res.statusText}`);
