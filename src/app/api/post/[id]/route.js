@@ -18,13 +18,15 @@ console.log( userId )
       const query = `
    SELECT publicaciones.*, categorias.nombre_categoria,usuarios.usuario_id,usuarios.username AS autor,SUM(votos_publicacion.positivo)-SUM(votos_publicacion.negativo) AS cantidad_votos, 
 CASE 
-  WHEN votos_publicacion.userId = ? THEN 
-    CASE 
-    WHEN votos_publicacion.positivo = 1 THEN "like"
-    WHEN votos_publicacion.negativo = 1 THEN "dislike"
+  CASE 
+    WHEN votos_publicacion.userId = ? THEN
+      CASE 
+        WHEN votos_publicacion.positivo = 1 THEN 'like'
+        WHEN votos_publicacion.negativo = 1 THEN 'dislike'
+        ELSE NULL
+      END
     ELSE NULL
-    END
-END as resultado_voto
+  END as resultado_voto
 FROM publicaciones 
     LEFT JOIN categorias 
     ON publicaciones.categoria = categorias.categoria_id
