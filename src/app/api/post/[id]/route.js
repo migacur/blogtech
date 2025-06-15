@@ -17,7 +17,6 @@ console.log( userId )
 
       const query = `
    SELECT publicaciones.*, categorias.nombre_categoria,usuarios.usuario_id,usuarios.username AS autor,SUM(votos_publicacion.positivo)-SUM(votos_publicacion.negativo) AS cantidad_votos, 
-CASE 
   CASE 
     WHEN votos_publicacion.userId = ? THEN
       CASE 
