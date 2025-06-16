@@ -114,9 +114,9 @@ const FormRegister = () => {
           placeholder="Repite tu password"
         />
         {isPassword ? (
-          <EyeIcon showPassword={showRepeat} />
+          <EyeIcon showPassword={showPassword} />
         ) : (
-          <EyeHideIcon showPassword={showRepeat} />
+          <EyeHideIcon showPassword={showPassword} />
         )}
       </div>
       <input
