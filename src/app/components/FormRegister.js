@@ -11,10 +11,7 @@ const FormRegister = () => {
   const { usuario, autenticarUser } = useContext(ContextoUsuario);
   const router = useRouter();
   const [user, setUser] = useState([]);
-  const [isPassword, setIsPassword] = useState({
-    password: true,
-    repeat: true,
-  });
+  const [isPassword, setIsPassword] = useState(true);
 
   useEffect(() => {
     if(usuario) return;
@@ -25,18 +22,7 @@ const FormRegister = () => {
     verificarUsuario();
   }, [usuario,autenticarUser, router]);
 
-  const showPassword = () => {
-    setIsPassword((previousState) => ({
-      ...previousState,
-      password: !previousState.password,
-    }));
-  };
-  const showRepeat = () => {
-    setIsPassword((previousState) => ({
-      ...previousState,
-      repeat: !previousState.repeat,
-    }));
-  };
+  const showPassword = () => setIsPassword(!isPassword)
 
   const leerInput = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -110,10 +96,10 @@ const FormRegister = () => {
           onChange={leerInput}
           name="password"
           className="w-[300px] py-1 px-2 outline-none rounded bg-slate-200 shadow-sm"
-          type={isPassword.password ? "password" : "text"}
+          type={isPassword ? "password" : "text"}
           placeholder="Ingresa tu password"
         />
-        {isPassword.password ? (
+        {isPassword ? (
           <EyeIcon showPassword={showPassword} />
         ) : (
           <EyeHideIcon showPassword={showPassword} />
@@ -124,10 +110,10 @@ const FormRegister = () => {
           onChange={leerInput}
           name="password_repeat"
           className="w-[300px] py-1 px-2 outline-none rounded bg-slate-200 shadow-sm"
-          type={isPassword.repeat ? "password" : "text"}
+          type={isPassword ? "password" : "text"}
           placeholder="Repite tu password"
         />
-        {isPassword.repeat ? (
+        {isPassword ? (
           <EyeIcon showPassword={showRepeat} />
         ) : (
           <EyeHideIcon showPassword={showRepeat} />
