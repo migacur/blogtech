@@ -5,28 +5,23 @@ export async function middleware(request) {
   const jwt = request.cookies.get('myToken')?.value;
   const path = request.nextUrl.pathname;
 
-  // 1. Rutas públicas que no requieren autenticación
   const publicPaths = [
     '/', 
     '/ingresar', 
     '/registrar',
     '/api/users/login',
-    '/api/users/verify' // ¡Importante! Esta debe ser pública
+    '/api/users/verify'
   ];
 
-  // 2. Verificar si es una ruta pública
   if (publicPaths.includes(path) || path.startsWith('/public/')) {
     return NextResponse.next();
   }
 
-  // 3. Determinar si es una ruta API
   const isApiRoute = path.startsWith('/api/');
 
   try {
-    // 4. Verificar token para rutas protegidas
-    if (!jwt) throw new Error('No token');
+    if (!jwt) throw new Error('No token'); // Token no presente
 
-    // 5. Verificar el token JWT
     const { payload } = await jwtVerify(
       jwt,
       new TextEncoder().encode(process.env.JWT_SECRET)
@@ -34,7 +29,6 @@ export async function middleware(request) {
 
     console.log('Token válido para usuario:', payload.userId);
 
-    // 6. Para rutas API: agregar user-id al header
     if (isApiRoute) {
       const response = NextResponse.next();
       response.headers.set('x-user-id', payload.userId);
@@ -46,15 +40,14 @@ export async function middleware(request) {
   } catch (error) {
     console.log('Error de autenticación:', error.message);
 
-      if (error instanceof jwt.TokenExpiredError) {
-    // Limpiar cookies expiradas
-    const response = NextResponse.redirect(new URL("/ingresar", request.url));
-    response.cookies.delete('myToken');
-    
-    return response;
+    // Manejar token expirado usando el código de error (jose usa códigos)
+    if (error.code === 'ERR_JWT_EXPIRED') {
+      const response = NextResponse.redirect(new URL("/ingresar", request.url));
+      response.cookies.delete('myToken');
+      return response;
     }
-    
-    // 7. Manejo diferente para rutas API vs páginas
+
+    // Manejar otros errores (token inválido o ausente)
     if (isApiRoute) {
       return new NextResponse(
         JSON.stringify({ error: 'No autorizado' }),
@@ -62,7 +55,7 @@ export async function middleware(request) {
       );
     }
     
-    // 8. Para rutas de página, redirigir a login
+    // Redirigir a login para rutas no-API
     return NextResponse.redirect(new URL("/ingresar", request.url));
   }
 }
