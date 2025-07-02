@@ -16,6 +16,7 @@ export default async function PostWrapper({ params }) {
 
   try {
     usuarioCookie ? userLogin = JSON.parse(usuarioCookie.value) : redirect("/ingresar");
+    console.log(`El usuario logueado es: ${userLogin}`)
   } catch (error) {
     console.error('Error al parsear la cookie:', error);
     Swal.fire({
