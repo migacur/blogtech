@@ -1,3 +1,5 @@
+/*
+
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
@@ -10,7 +12,7 @@ export async function middleware(request) {
     '/ingresar', 
     '/registrar',
     '/api/users/login',
-    '/api/users/verify'
+  //  '/api/users/verify'
   ];
 
   if (publicPaths.includes(path) || path.startsWith('/public/')) {
@@ -68,3 +70,76 @@ export const config = {
     '/api/users/profile'
   ]
 };
+*/
+import { NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
+
+export async function middleware(request) {
+  const path = request.nextUrl.pathname;
+  
+  // Ignorar recursos estáticos
+  if (path.startsWith('/_next') || 
+      path.startsWith('/static') || 
+      path.match(/\.[a-z0-9]+$/i)) {
+    return NextResponse.next();
+  }
+
+  const jwt = request.cookies.get('myToken')?.value;
+  
+  const publicPaths = [
+    '/', 
+    '/ingresar', 
+    '/registrar',
+    '/api/users/login',
+    '/api/users/verify'
+  ];
+
+  if (publicPaths.includes(path) || path.startsWith('/public/')) {
+    return NextResponse.next();
+  }
+
+  const isApiRoute = path.startsWith('/api/');
+
+  try {
+    if (!jwt) throw new Error('No token');
+
+    const { payload } = await jwtVerify(
+      jwt,
+      new TextEncoder().encode(process.env.JWT_SECRET)
+    );
+
+    const response = isApiRoute 
+      ? NextResponse.next() 
+      : NextResponse.next();
+
+    // DESHABILITAR CACHÉ PARA RUTAS PROTEGIDAS
+    if (!publicPaths.includes(path)) {
+      response.headers.set('Cache-Control', 'no-store, max-age=0');
+      response.headers.set('Pragma', 'no-cache');
+    }
+
+    if (isApiRoute) {
+      response.headers.set('x-user-id', payload.userId);
+    }
+
+    return response;
+    
+  } catch (error) {
+    if (error.code === 'ERR_JWT_EXPIRED') {
+      const response = NextResponse.redirect(new URL("/ingresar", request.url));
+      response.cookies.delete('myToken');
+      return response;
+    }
+
+    if (isApiRoute) {
+      return new NextResponse(
+        JSON.stringify({ error: 'No autorizado' }),
+        { status: 401 }
+      );
+    }
+    
+    const response = NextResponse.redirect(new URL("/ingresar", request.url));
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    return response;
+  }
+}
