@@ -77,7 +77,12 @@ import { jwtVerify } from 'jose';
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
   
-  // Ignorar recursos estáticos
+  // 1. Responder inmediatamente a health check
+  if (path === '/api/health') {
+    return NextResponse.json({ status: 'ok' });
+  }
+  
+  // 2. Ignorar recursos estáticos
   if (path.startsWith('/_next') || 
       path.startsWith('/static') || 
       path.match(/\.[a-z0-9]+$/i)) {
@@ -86,12 +91,14 @@ export async function middleware(request) {
 
   const jwt = request.cookies.get('myToken')?.value;
   
+  // 3. Rutas públicas (incluyendo health check)
   const publicPaths = [
     '/', 
     '/ingresar', 
     '/registrar',
     '/api/users/login',
-    '/api/users/verify'
+    '/api/users/verify',
+    '/api/health'
   ];
 
   if (publicPaths.includes(path) || path.startsWith('/public/')) {
@@ -108,11 +115,9 @@ export async function middleware(request) {
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
 
-    const response = isApiRoute 
-      ? NextResponse.next() 
-      : NextResponse.next();
+    const response = NextResponse.next();
 
-    // DESHABILITAR CACHÉ PARA RUTAS PROTEGIDAS
+    // 4. Deshabilitar caché solo para rutas protegidas
     if (!publicPaths.includes(path)) {
       response.headers.set('Cache-Control', 'no-store, max-age=0');
       response.headers.set('Pragma', 'no-cache');
@@ -143,3 +148,12 @@ export async function middleware(request) {
     return response;
   }
 }
+
+export const config = {
+  matcher: [
+    '/post/:path*',
+    '/editar/:path*',
+    '/publicar',
+    '/api/users/profile'
+  ],
+};
