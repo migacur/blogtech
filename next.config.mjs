@@ -1,5 +1,17 @@
 const nextConfig = {
+    experimental: {
+    // Deshabilitar caché de rutas estáticas
     staticPageGenerationTimeout: 0,
+    // Deshabilitar caché de imágenes
+    images: {
+      unoptimized: true,
+    },
+  },
+  // Deshabilitar caché de compilación
+  onDemandEntries: {
+    maxInactiveAge: 1000 * 60 * 60, // 1 hora
+    pagesBufferLength: 5,
+  },
   images: {
     remotePatterns: [
       { protocol: "https", 
