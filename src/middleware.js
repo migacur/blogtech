@@ -42,6 +42,7 @@ export async function middleware(request) {
 
     // Manejar token expirado usando el código de error (jose usa códigos)
     if (error.code === 'ERR_JWT_EXPIRED') {
+       console("REDIRIGIENDO A INGRESAR...")
       const response = NextResponse.redirect(new URL("/ingresar", request.url));
       response.cookies.delete('myToken');
       return response;
@@ -56,6 +57,7 @@ export async function middleware(request) {
     }
     
     // Redirigir a login para rutas no-API
+    console("REDIRIGIENDO A INGRESAR...")
     return NextResponse.redirect(new URL("/ingresar", request.url));
   }
 }
