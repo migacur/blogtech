@@ -10,7 +10,7 @@ export async function middleware(request) {
     '/ingresar', 
     '/registrar',
     '/api/users/login',
-    '/api/users/verify'
+  //  '/api/users/verify'
   ];
 
   if (publicPaths.includes(path) || path.startsWith('/public/')) {
