@@ -8,6 +8,9 @@ import NotFound from './NotFound';
 import RecommendedWrapper from './recommendedWapper';
 import CategoryList from './CategoryList';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function PostWrapper({ params }) {
   const usuarioGuardado = cookies();
   const usuarioCookie = usuarioGuardado.get("usuario");
