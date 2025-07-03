@@ -68,4 +68,3 @@ export const config = {
     '/api/users/profile'
   ]
 };
-
