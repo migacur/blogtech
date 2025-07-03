@@ -12,9 +12,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function PostWrapper({ params }) {
-  const headerList = headers();
-  headerList.set('Cache-Control', 'no-store, max-age=0');
-  headerList.set('Pragma', 'no-cache');
+
   const usuarioGuardado = cookies();
   const usuarioCookie = usuarioGuardado.get("usuario");
 
