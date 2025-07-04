@@ -1,55 +1,34 @@
 // app/post/[id]/PostWrapper.js
-import { cookies } from 'next/headers';
+//import { cookies } from 'next/headers';
 import { showPostId } from '@/app/helpers/showPostId';
 import Post from '@/app/components/Post';
 import { redirect } from 'next/navigation';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
 import NotFound from './NotFound';
 import RecommendedWrapper from './recommendedWapper';
 import CategoryList from './CategoryList';
+import { getUserId } from '../actions/auth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function PostWrapper({ params }) {
 
-  const usuarioGuardado = cookies();
-  const usuarioCookie = usuarioGuardado.get("usuario");
+   const userId = await getUserId();
 
-  let userLogin;
-  console.log("------COOKIE DE USUARIO-------")
-  console.log(usuarioCookie)
-  console.log("------COOKIE DE USUARIO-------")
-  try {
-    usuarioCookie ? userLogin = JSON.parse(usuarioCookie.value) : redirect("/ingresar");
-    console.log(`El usuario logueado es: ${userLogin}`)
-  } catch (error) {
-    console.error('Error al parsear la cookie:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '',
-      text: 'Ocurrió un error al autenticar el usuario',
-      confirmButtonText: 'Entendido',
-      allowOutsideClick: false
-    });
-    return redirect('/ingresar'); 
-  }
-
+    if (!userId) {
+      console.error("Usuario NO encontrado...")
+    return redirect('/ingresar');
+    }
+  
   let post;
 
   try {
     // Intenta obtener el post
-    post = await showPostId(params.id, userLogin.id);
+    post = await showPostId(params.id, userId);
     console.log(post)
   } catch (error) {
     console.error('Error al obtener el post:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '',
-      text: 'Ocurrió un error al cargar la publicación',
-      confirmButtonText: 'Entendido',
-      allowOutsideClick: false
-    });
     return;
   }
 
