@@ -9,8 +9,6 @@ import RecommendedWrapper from './recommendedWapper';
 import CategoryList from './CategoryList';
 import { getUserId } from '../actions/auth';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default async function PostWrapper({ params }) {
 

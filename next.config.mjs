@@ -1,11 +1,9 @@
 const nextConfig = {
-    experimental: {
-    // Deshabilitar caché de rutas estáticas
+   experimental: {
+    // IMPORTANTE: Deshabilitar completamente el SSG
+    isrMemoryCacheSize: 0,
     staticPageGenerationTimeout: 0,
-    // Deshabilitar caché de imágenes
-    images: {
-      unoptimized: true,
-    },
+    incrementalCacheHandlerPath: require.resolve('./cache-handler.js'),
   },
   // Deshabilitar caché de compilación
   onDemandEntries: {
