@@ -18,7 +18,7 @@ const Card = ({posts}) => {
   return (
       <>
         { posts.map((post,i) => (
-           <Link href={`/post/${post.publicacion_id}`} key={post.publicacion_id}>
+           <Link href={`/post/${post.publicacion_id}`} key={post.publicacion_id} prefetch={false}>
           <div
           className={`${i === 0 ? 'h-auto flex-col ' : '' } w-full h-[200px] flex mt-6 hover:bg-slate-100
            cursor-pointer transition-all rounded-md max-sm:flex-col max-md:h-auto `}>

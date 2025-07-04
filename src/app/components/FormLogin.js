@@ -21,7 +21,7 @@ const FormLogin = () => {
       if(usuario) return;
       const verificarUsuario = async () => {
         const autenticado = await autenticarUser();
-        if (autenticado) return router.push("/");
+        if (autenticado)  return window.location.href = '/';
       };
       verificarUsuario();
     }, [usuario,autenticarUser, router]);
