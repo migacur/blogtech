@@ -1,14 +1,8 @@
 const nextConfig = {
-   experimental: {
-    // IMPORTANTE: Deshabilitar completamente el SSG
-    isrMemoryCacheSize: 0,
-    staticPageGenerationTimeout: 0,
-    incrementalCacheHandlerPath: require.resolve('./cache-handler.js'),
-  },
-  // Deshabilitar caché de compilación
+    // 1. Deshabilitar caché de compilación
   onDemandEntries: {
-    maxInactiveAge: 1000 * 60 * 60, // 1 hora
-    pagesBufferLength: 5,
+    maxInactiveAge: 0,  // Invalida inmediatamente
+    pagesBufferLength: 1
   },
   images: {
     remotePatterns: [

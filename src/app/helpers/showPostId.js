@@ -5,7 +5,8 @@ export async function showPostId(postId, userId) {
    const res = await fetch(`${API_URL}/api/post/${postId}?user_id=${userId}`, {
   method: 'GET',
   headers: { "Content-Type": "application/json" },
-   cache: "no-store"
+   cache: "no-store",
+  next: { revalidate: 0 }
 });
 
     if (!res.ok) {
