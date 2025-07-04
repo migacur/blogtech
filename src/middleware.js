@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 export async function middleware(request) {
   const jwt = request.cookies.get('myToken')?.value;
   const path = request.nextUrl.pathname;
-
+   console.log('Leyendo jwt desde middleware:', jwt);
   const publicPaths = [
     '/', 
     '/ingresar', 
