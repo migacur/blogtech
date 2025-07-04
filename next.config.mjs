@@ -66,16 +66,32 @@ const nextConfig = {
       },
     ],
   },
-  async headers() {
+   async headers() {
     return [
       {
-        // Aplicar a todas las rutas de API
-        source: "/api/post/:id", // :path* captura todas las rutas bajo /api
+        source: "/post/:path*",
         headers: [
-          {
-            key: "x-user-data", // Nombre del header personalizado
-            value: "", // El valor se establecerá dinámicamente en el middleware
+          { 
+            key: "Cache-Control", 
+            value: "private, no-store, max-age=0, must-revalidate" 
           },
+          { 
+            key: "CDN-Cache-Control", 
+            value: "private, no-store" 
+          },
+          { 
+            key: "Vercel-CDN-Cache-Control", 
+            value: "private, no-store" 
+          }
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          { 
+            key: "Cache-Control", 
+            value: "no-store, max-age=0" 
+          }
         ],
       },
     ];
