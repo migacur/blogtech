@@ -6,7 +6,9 @@ export async function POST(request) {
   const data = await request.json();
   const postId = Number(data.postId);
   const userId = Number(data.userId);
-
+console.log("COMPROBANDO DATOS DE VOTOS DE MIERDA")
+console.log(`POST ID: ${postId} ---- USUARIO ID: ${userId}`)
+console.log("COMPROBANDO DATOS DE VOTOS DE MIERDA")
   if(typeof postId !== 'number' || typeof userId !== 'number' || !data){
      return NextResponse.json({ 
           msg: "Los datos recibidos no son correctos", 
