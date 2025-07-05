@@ -1,13 +1,11 @@
 "use client";
 
 import { ContextoUsuario } from "@/context/authContext";
-import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import Swal from "sweetalert2";
 
 const Logout = () => {
   const { guardarUsuario } = useContext(ContextoUsuario);
-  const router = useRouter();
 
   const logoutUser = async () => {
     try {
@@ -19,7 +17,7 @@ const Logout = () => {
           icon: "success",
         });
         guardarUsuario(null);
-        router.push("/");
+        return window.location.href = '/';
       }
       const data = await res.json();
       console.log(data);
