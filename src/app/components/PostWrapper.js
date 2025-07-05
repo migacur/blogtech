@@ -47,7 +47,7 @@ export default async function PostWrapper({ params }) {
     <Post 
       post={post} 
       params={params} 
-      userLogin={userId} 
+      userId={userId} 
       cantidadVotos={Number(post.cantidad_votos)}
     />
 

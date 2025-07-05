@@ -8,7 +8,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from '@/app/post/[id]/page.module.css';
 
-const Post = ({post,params,userLogin,cantidadVotos}) => {
+const Post = ({post,params,userId,cantidadVotos}) => {
   const [votos, setVotos] = useState(cantidadVotos);
   const [votoAnterior, setVotoAnterior] = useState(post.resultado_voto || null);
 
@@ -28,7 +28,7 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
       <h1 className="mt-6 mb-3 text-2xl sm:text-3xl md:text-4xl font-bold ">{post.titulo}</h1>
       <h2 className="text-1xl sm:text-2xl md:text-3xl">{post.subtitulo}</h2>
       <div className='flex place-content-end place-items-center'>
-        {userLogin.id === post.idUsuario &&
+        {userId === post.idUsuario &&
           <>
             <BtnEdit post={params.id} />
             <BtnDelete postId={params.id} />
@@ -61,10 +61,7 @@ const Post = ({post,params,userLogin,cantidadVotos}) => {
           <Voto
           post={post}
           postId={params.id}
-          userId={userLogin.id}
-        //  initialVote={post.resultado_voto}
-        //  votos={votos}
-         // actualizarVotos={actualizarVotos}
+          userId={userId}
           />
           </div>
         </div>
