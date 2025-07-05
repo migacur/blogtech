@@ -69,7 +69,7 @@ const FormLogin = () => {
         setIsLoad(true);
         guardarUsuario(res.usuario)
       //  autenticarUser(); // Llama a autenticarUser una sola vez
-        router.push("/");
+        return window.location.href = '/';
       } else {
         Swal.fire({
           title: 'Ha ocurrido un error',
