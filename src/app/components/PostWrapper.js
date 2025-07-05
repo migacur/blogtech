@@ -13,9 +13,7 @@ import { getUserId } from '../actions/auth';
 export default async function PostWrapper({ params }) {
 
    const userId = await getUserId();
-  console.log("--- COMPROBANDO VALOR DE MIERDA DE USER ID ---")
-  console.log(userId)
-    console.log("--- COMPROBANDO VALOR DE MIERDA DE USER ID ---")
+ 
     if (!userId) {
       console.error("Usuario NO encontrado...")
     return redirect('/ingresar');
@@ -24,7 +22,6 @@ export default async function PostWrapper({ params }) {
   let post;
 
   try {
-    // Intenta obtener el post
     post = await showPostId(params.id, userId);
     console.log(post)
   } catch (error) {

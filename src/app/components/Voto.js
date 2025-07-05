@@ -13,9 +13,7 @@ const Voto = ({ post, postId, userId }) => {
 
  const handleVote = async (voteType) => {
   setIsLoading(true);
-  console.log("--- VOTETYPE ---- ")
-  console.log(voteType)
-   console.log("--- VOTETYPE ---- ")
+
   try {
     const data = { condition: voteType, postId, userId };
     const response = await fetch("/api/post/vote", {
