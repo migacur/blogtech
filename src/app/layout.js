@@ -7,8 +7,8 @@ import UserProviderClient from "./components/userProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "BlogTech",
-  description: "Tu blog de noticias",
+  title: "Blog Geek",
+  description: "Tu portal de noticias",
 };
 
 export default function RootLayout({ children }) {

@@ -2,7 +2,7 @@
 import Link from "next/link"
 import Navbar from "./Navbar"
 import Image from "next/image"
-import logo from '../../../public/logo.png'
+import logo from '../../../public/logo.webp'
 import { useState } from "react"
 
 const Header = () => {
